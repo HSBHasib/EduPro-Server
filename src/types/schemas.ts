@@ -9,8 +9,8 @@ export const createItemSchema = z.object({
     content: z.string().min(1),
     author: z.string().min(1),
     tags: z.array(z.string()).optional().default([]),
-    thumbnailUrl: z.string().url().optional().default(""),
-    sourceUrl: z.string().url().optional().default(""),
+    thumbnailUrl: z.union([z.string().url(), z.literal("")]).optional().default(""),
+    sourceUrl: z.union([z.string().url(), z.literal("")]).optional().default(""),
   }),
 });
 
@@ -24,8 +24,8 @@ export const updateItemSchema = z.object({
     content: z.string().min(1).optional(),
     author: z.string().min(1).optional(),
     tags: z.array(z.string()).optional(),
-    thumbnailUrl: z.string().url().optional(),
-    sourceUrl: z.string().url().optional(),
+    thumbnailUrl: z.union([z.string().url(), z.literal("")]).optional(),
+    sourceUrl: z.union([z.string().url(), z.literal("")]).optional(),
   }),
 });
 
