@@ -12,6 +12,12 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
+
+// Trust proxy for rate limiting behind reverse proxy (Render, Vercel, etc.)
+if (config.nodeEnv === "production") {
+  app.set("trust proxy", 1);
+}
+
 app.use(
   cors({
     origin: config.allowedOrigins,
