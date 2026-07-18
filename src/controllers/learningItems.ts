@@ -10,7 +10,7 @@ export async function createItem(req: Request, res: Response): Promise<void> {
 }
 
 export async function getItems(req: Request, res: Response): Promise<void> {
-  const { search, category, priority, page = 1, limit = 12 } = req.query;
+  const { search, category, priority, sort, page = 1, limit = 12 } = req.query;
 
   const filter: Record<string, unknown> = {};
 
@@ -24,11 +24,29 @@ export async function getItems(req: Request, res: Response): Promise<void> {
     filter.priority = priority;
   }
 
+  let sortOption: Record<string, 1 | -1> = { createdAt: -1 };
+  switch (sort) {
+    case "oldest":
+      sortOption = { createdAt: 1 };
+      break;
+    case "most_viewed":
+      sortOption = { viewCount: -1 };
+      break;
+    case "title_asc":
+      sortOption = { title: 1 };
+      break;
+    case "title_desc":
+      sortOption = { title: -1 };
+      break;
+    default:
+      sortOption = { createdAt: -1 };
+  }
+
   const skip = ((page as number) - 1) * (limit as number);
 
   const [items, total] = await Promise.all([
     LearningItem.find(filter)
-      .sort({ createdAt: -1 })
+      .sort(sortOption)
       .skip(skip)
       .limit(limit as number)
       .lean(),
