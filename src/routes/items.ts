@@ -10,6 +10,7 @@ import {
 } from "../controllers/learningItems.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { validate } from "../middleware/validate.js";
+import { authenticateSession } from "../middleware/authenticateSession.js";
 import {
   createItemSchema,
   updateItemSchema,
@@ -19,12 +20,15 @@ import {
 
 const router = Router();
 
+// Public routes
 router.get("/stats", asyncHandler(getStats));
 router.get("/categories", asyncHandler(getCategories));
 router.get("/", validate(queryItemsSchema), asyncHandler(getItems));
-router.post("/", validate(createItemSchema), asyncHandler(createItem));
 router.get("/:id", validate(idParamSchema), asyncHandler(getItemById));
-router.put("/:id", validate(updateItemSchema), asyncHandler(updateItem));
-router.delete("/:id", validate(idParamSchema), asyncHandler(deleteItem));
+
+// Protected routes (require authentication)
+router.post("/", authenticateSession, validate(createItemSchema), asyncHandler(createItem));
+router.put("/:id", authenticateSession, validate(updateItemSchema), asyncHandler(updateItem));
+router.delete("/:id", authenticateSession, validate(idParamSchema), asyncHandler(deleteItem));
 
 export default router;

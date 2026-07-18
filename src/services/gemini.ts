@@ -46,6 +46,7 @@ export async function* streamChat(
           topP: 0.9,
         },
         systemInstruction: {
+          role: "system",
           parts: [{ text: systemInstruction || "You are EduPro AI, a helpful educational assistant. Provide clear, concise, and accurate information to help students learn effectively." }],
         },
       });
