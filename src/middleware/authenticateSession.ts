@@ -16,12 +16,15 @@ function extractToken(req: Request): string | null {
   const cookies = req.headers.cookie || "";
   const cookiePairs = cookies.split(";");
   for (const pair of cookiePairs) {
-    const [name, value] = pair.trim().split("=");
+    const [name, rawValue] = pair.trim().split("=");
     if (
       name === "better-auth.session_token" ||
       name === "__Secure-better-auth.session_token"
     ) {
-      return value || null;
+      if (!rawValue) return null;
+      // BetterAuth cookie format: "token.signature" — extract just the token part
+      const token = decodeURIComponent(rawValue).split(".")[0];
+      return token || null;
     }
   }
 
