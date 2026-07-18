@@ -40,6 +40,23 @@ if (config.nodeEnv === "development") {
   app.use(morgan("dev"));
 }
 
+// Root route
+app.get("/", (_req, res) => {
+  res.json({
+    name: "EduPro Server",
+    version: "1.0.0",
+    status: "running",
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: "/health",
+      api: "/api",
+      items: "/api/items",
+      chat: "/api/chat",
+      documents: "/api/documents",
+    },
+  });
+});
+
 // Health check
 app.get("/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
