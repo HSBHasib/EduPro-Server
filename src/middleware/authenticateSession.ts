@@ -5,22 +5,35 @@ export interface AuthenticatedRequest extends Request {
   userId?: string;
 }
 
+function extractToken(req: Request): string | null {
+  // 1. Check Authorization header first
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    return authHeader.split(" ")[1];
+  }
+
+  // 2. Check cookies (BetterAuth HTTP-only cookie)
+  const cookies = req.headers.cookie || "";
+  const cookiePairs = cookies.split(";");
+  for (const pair of cookiePairs) {
+    const [name, value] = pair.trim().split("=");
+    if (
+      name === "better-auth.session_token" ||
+      name === "__Secure-better-auth.session_token"
+    ) {
+      return value || null;
+    }
+  }
+
+  return null;
+}
+
 export async function authenticateSession(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    res.status(401).json({
-      success: false,
-      error: "Unauthorized: Session expired or invalid token.",
-    });
-    return;
-  }
-
-  const token = authHeader.split(" ")[1];
+  const token = extractToken(req);
 
   if (!token || token.length < 10) {
     res.status(401).json({
