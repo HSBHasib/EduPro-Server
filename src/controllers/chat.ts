@@ -56,7 +56,8 @@ export async function streamChatMessage(req: Request, res: Response): Promise<vo
     res.end();
   } catch (error) {
     console.error("[Chat] Streaming error:", error);
-    res.write(`data: ${JSON.stringify({ error: "Failed to generate response" })}\n\n`);
+    const message = error instanceof Error ? error.message : "Unknown error";
+    res.write(`data: ${JSON.stringify({ error: message })}\n\n`);
     res.end();
   }
 }

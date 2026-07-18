@@ -10,7 +10,7 @@ function getGenAI(): GenerativeModel {
       throw new Error("GEMINI_API_KEY is not configured");
     }
     genAI = new GoogleGenerativeAI(config.geminiApiKey);
-    model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
   }
   return model;
 }
@@ -32,7 +32,9 @@ export async function* streamChat(
       temperature: 0.7,
       topP: 0.9,
     },
-    systemInstruction: systemInstruction || "You are EduPro AI, a helpful educational assistant. Provide clear, concise, and accurate information to help students learn effectively.",
+    systemInstruction: {
+      parts: [{ text: systemInstruction || "You are EduPro AI, a helpful educational assistant. Provide clear, concise, and accurate information to help students learn effectively." }],
+    },
   });
 
   const result = await chat.sendMessageStream(message);
