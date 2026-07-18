@@ -3,8 +3,8 @@ import { config } from "../config/env.js";
 
 let genAI: GoogleGenerativeAI | null = null;
 let model: GenerativeModel | null = null;
-let currentModel = "gemini-2.0-flash-lite";
-const models = ["gemini-2.0-flash-lite", "gemini-2.5-flash", "gemini-2.0-flash"];
+let currentModel = "gemini-flash-latest";
+const models = ["gemini-flash-latest", "gemini-flash-lite-latest", "gemini-2.0-flash"];
 
 function getGenAI(): GenerativeModel {
   if (!model) {
