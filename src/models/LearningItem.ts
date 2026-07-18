@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface ILearningItem extends Document {
+  userId: string;
   title: string;
   description: string;
   category: string;
@@ -17,6 +18,7 @@ export interface ILearningItem extends Document {
 
 const learningItemSchema = new Schema<ILearningItem>(
   {
+    userId: { type: String, required: true, index: true },
     title: { type: String, required: true, trim: true, maxlength: 200 },
     description: { type: String, required: true, trim: true, maxlength: 2000 },
     category: { type: String, required: true, trim: true },

@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import { LearningItem, ILearningItem } from "../models/LearningItem.js";
 import { AppError } from "../middleware/errorHandler.js";
+import { AuthenticatedRequest } from "../middleware/authenticateSession.js";
 
 export async function createItem(req: Request, res: Response): Promise<void> {
-  const item = await LearningItem.create(req.body);
+  const authReq = req as AuthenticatedRequest;
+  const item = await LearningItem.create({ ...req.body, userId: authReq.userId });
   res.status(201).json({ success: true, data: item });
 }
 
@@ -112,6 +114,32 @@ export async function getStats(_req: Request, res: Response): Promise<void> {
       totalViews: totalViews[0]?.total || 0,
       categories,
       recentItems,
+    },
+  });
+}
+
+export async function getMyItems(req: Request, res: Response): Promise<void> {
+  const authReq = req as AuthenticatedRequest;
+  const { page = 1, limit = 100 } = req.query;
+  const skip = ((page as number) - 1) * (limit as number);
+
+  const [items, total] = await Promise.all([
+    LearningItem.find({ userId: authReq.userId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit as number)
+      .lean(),
+    LearningItem.countDocuments({ userId: authReq.userId }),
+  ]);
+
+  res.json({
+    success: true,
+    data: items,
+    pagination: {
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      pages: Math.ceil(total / (limit as number)),
     },
   });
 }

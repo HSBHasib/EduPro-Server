@@ -7,6 +7,7 @@ import {
   deleteItem,
   getCategories,
   getStats,
+  getMyItems,
 } from "../controllers/learningItems.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { validate } from "../middleware/validate.js";
@@ -23,6 +24,7 @@ const router = Router();
 // Public routes
 router.get("/stats", asyncHandler(getStats));
 router.get("/categories", asyncHandler(getCategories));
+router.get("/mine", authenticateSession, asyncHandler(getMyItems));
 router.get("/", validate(queryItemsSchema), asyncHandler(getItems));
 router.get("/:id", validate(idParamSchema), asyncHandler(getItemById));
 
