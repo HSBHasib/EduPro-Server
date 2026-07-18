@@ -35,7 +35,7 @@ export const queryItemsSchema = z.object({
     category: z.string().optional(),
     priority: z.enum(["low", "medium", "high"]).optional(),
     page: z.coerce.number().int().positive().default(1),
-    limit: z.coerce.number().int().min(1).max(50).default(12),
+    limit: z.coerce.number().int().min(1).max(100).default(12),
   }),
 });
 
