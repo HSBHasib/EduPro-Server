@@ -33,7 +33,6 @@ const chatSessionSchema = new Schema<IChatSession>(
   }
 );
 
-chatSessionSchema.index({ sessionId: 1 });
 chatSessionSchema.index({ updatedAt: -1 });
 
 export const ChatSession = mongoose.model<IChatSession>("ChatSession", chatSessionSchema);
